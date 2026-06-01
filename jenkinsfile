@@ -1,36 +1,5 @@
-pipeline {
-  environment {
-    registry = "dpdurgadp/hello_world_docker"
-    registryCredential = 'dockerhub_credentials'
-    dockerImage = ''
-  }
-  agent any
-  stages {
-    stage('get scm') {
-      steps {
-	  git branch: 'main', credentialsId: 'github_credentials', url: 'https://github.com/Durgadp27/hello_world_docker.git'
-       }
-    }
-    stage('Building image') {
-      steps{
-        script {
-          dockerImage = docker.build registry + ":$BUILD_NUMBER"
-        }
-      }
-    }
-    stage('push image') {
-      steps{
-        script {
-          docker.withRegistry( '', registryCredential ) {
-            dockerImage.push()
-          }
-        }
-      }
-    }
-    stage('Remove old docker image') {
-      steps{
-        sh "docker rmi $registry:$BUILD_NUMBER"
-      }
-    }
-  }
-}
+@Library("Durgadp27@main") _
+pushDockerHub2(
+ecrRepoName: 'hello-world-docker'
+)
+
